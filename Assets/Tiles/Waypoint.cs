@@ -5,8 +5,11 @@ using UnityEngine.Tilemaps;
 
 public class Waypoint : MonoBehaviour
 {
-    [SerializeField] private bool _isPlaceable;
     [SerializeField] private GameObject _towerPrefab;
+    
+    [SerializeField] private bool _isPlaceable;
+    public bool IsPlaceable { get { return _isPlaceable; } }
+
     private void OnMouseDown()
     {
         if (_isPlaceable)
