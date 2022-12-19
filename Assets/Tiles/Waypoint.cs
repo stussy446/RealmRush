@@ -1,18 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Waypoint : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private GameObject _towerPrefab;
+    
+    [SerializeField] private bool _isPlaceable;
+    public bool IsPlaceable { get { return _isPlaceable; } }
 
-    // Update is called once per frame
-    void Update()
+    private void OnMouseDown()
     {
-        
+        if (_isPlaceable)
+        {
+            Instantiate(_towerPrefab, transform.position, Quaternion.identity);
+            _isPlaceable = false;
+        }
     }
 }
+
