@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyMover : MonoBehaviour
@@ -8,7 +9,7 @@ public class EnemyMover : MonoBehaviour
 
     private List<Waypoint> _path = new List<Waypoint>();
 
-    private void Start()
+    private void OnEnable()
     {
         FindPath();
         ReturnToStart();
@@ -50,6 +51,6 @@ public class EnemyMover : MonoBehaviour
             }
         }
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
