@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class PathFinder : MonoBehaviour
@@ -42,8 +43,13 @@ public class PathFinder : MonoBehaviour
 
     public List<Node> GetNewPath()
     {
+        return GetNewPath(_startCoordinates);
+    }
+
+    public List<Node> GetNewPath(Vector2Int coordinates)
+    {
         _gridManager.ResetNodes();
-        BreadthFirstSearch();
+        BreadthFirstSearch(coordinates);
         return BuildPath();
     }
 
@@ -72,7 +78,7 @@ public class PathFinder : MonoBehaviour
         }
     }
 
-    private void BreadthFirstSearch()
+    private void BreadthFirstSearch(Vector2Int coordinates)
     {
         _startNode.isWalkable = true;
         _destinationNode.isWalkable = true;
@@ -82,8 +88,8 @@ public class PathFinder : MonoBehaviour
 
         bool is_running = true;
 
-        _frontier.Enqueue(_startNode);
-        _reached.Add(_startCoordinates, _startNode);
+        _frontier.Enqueue(_grid[coordinates]);
+        _reached.Add(coordinates, _grid[coordinates]);
 
         while (_frontier.Count > 0 && is_running)
         {
@@ -135,5 +141,9 @@ public class PathFinder : MonoBehaviour
         }
 
         return false;
+    }
+    public void NotifyReceivers()
+    {
+        BroadcastMessage("RecalculatePath", false, SendMessageOptions.DontRequireReceiver);
     }
 }
