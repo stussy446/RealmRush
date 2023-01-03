@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class Tile : MonoBehaviour
 {
@@ -9,12 +8,14 @@ public class Tile : MonoBehaviour
     [SerializeField] private bool _isPlaceable;
 
     private GridManager _gridManager;
+    private PathFinder _pathFinder;
     private Vector2Int _coordinates = new Vector2Int();
     public bool IsPlaceable { get { return _isPlaceable; } }
 
     private void Awake()
     {
         _gridManager = FindObjectOfType<GridManager>();
+        _pathFinder = FindObjectOfType<PathFinder>();
     }
     private void Start()
     {
@@ -31,10 +32,11 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (_isPlaceable)
+        if (_gridManager.GetNode(_coordinates).isWalkable && !_pathFinder.WillBlockPath(_coordinates)) 
         {
             bool isPlaced = _towerPrefab.CreateTower(_towerPrefab, transform.position);
             _isPlaceable = !isPlaced;
+            _gridManager.BlockNode(_coordinates);
         }
     }
 }

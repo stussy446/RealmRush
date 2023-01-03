@@ -20,6 +20,9 @@ public class PathFinder : MonoBehaviour
     private Dictionary<Vector2Int, Node> _reached = new Dictionary<Vector2Int, Node>();
     private Queue<Node> _frontier = new Queue<Node>();
 
+    public Vector2Int StartCoordinates { get { return _startCoordinates; } }
+    public Vector2Int DestinationCoordinates { get { return _destinationCoordinates; } }
+    
     private void Awake()
     {
         _gridManager = FindObjectOfType<GridManager>();
@@ -27,16 +30,21 @@ public class PathFinder : MonoBehaviour
         if (_gridManager != null)
         {
             _grid = _gridManager.Grid;
+            _startNode = _grid[_startCoordinates];
+            _destinationNode = _grid[_destinationCoordinates];
         }      
     }
 
     private void Start()
     {
-        _startNode = _gridManager.Grid[_startCoordinates];
-        _destinationNode = _gridManager.Grid[_destinationCoordinates];
+        GetNewPath();
+    }
 
+    public List<Node> GetNewPath()
+    {
+        _gridManager.ResetNodes();
         BreadthFirstSearch();
-        BuildPath();
+        return BuildPath();
     }
 
     private void ExploreNeighbors()
@@ -66,6 +74,12 @@ public class PathFinder : MonoBehaviour
 
     private void BreadthFirstSearch()
     {
+        _startNode.isWalkable = true;
+        _destinationNode.isWalkable = true;
+
+        _frontier.Clear();
+        _reached.Clear();
+
         bool is_running = true;
 
         _frontier.Enqueue(_startNode);
@@ -101,5 +115,25 @@ public class PathFinder : MonoBehaviour
 
         path.Reverse();
         return path;
+    }
+
+    public bool WillBlockPath(Vector2Int coordinates)
+    {
+        if (_grid.ContainsKey(coordinates))
+        {
+            bool previousState = _grid[coordinates].isWalkable;
+
+            _grid[coordinates].isWalkable = false;
+            List<Node> newPath = GetNewPath();
+            _grid[coordinates].isWalkable = previousState;
+
+            if (newPath.Count <= 1)
+            {
+                GetNewPath();
+                return true;
+            }
+        }
+
+        return false;
     }
 }
